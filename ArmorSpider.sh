@@ -1,7 +1,18 @@
 #!/bin/bash
 clear
-#website="http://www.dhm.de/datenbank/dhm.php?seite=5&fld_0=MI002762"
-#webpagesDeep=5 #Valid numbers: 1-5
+
+echo "   +-----------------------------------------"
+echo "   :\". /  /  /"
+echo "   :.-\". /  /"
+echo "   : _.-\". /"
+echo "   :\"  _.-\"."
+echo "   :-\"\"     \"."
+echo "   :"
+echo "   :"
+echo " ^.-.^"
+echo "\'^\\+/^\`"
+echo "'/`\"'\\`"
+
 GermanWordlist=("Breite" "Herstellung" "Jagd" "Orient" "Gewicht" "Hieb" "Stichwaffen") #"cm"
 GermanBADlist=("Foto" "Druck" "Druckgraphik" "Fotografie" "Fotopapier") #"cm"
 
@@ -10,12 +21,11 @@ rm $SavedListToLookAt
 
 echo "[ArmorSpider] Super Awesome Armor Finder..."
 echo ""
-#echo "[ArmorSpider] Downloading ALL THE THINGS from: $website"
-#echo "[RECCOMENDATION] Get a drink. This will take a while..."
-#download 5 pages deep of links from $website
-#wget -E -l $webpagesDeep $website
-#echo "[ArmorSpider] Downloading COMPLETED!"
-#echo ""
+
+echo "[ArmorSpider] Looking for ${#GermanWordlist[@]} words"
+echo "[ArmorSpider] Banned ${#GermanBADlist[@]} words"
+echo "[ArmorSpider] Press enter to continue..."
+read pressentertocontinue
 
 amount=`find . | wc -l`
 echo "[ArmorSpider] Parsing $amount File(s) for keywords"
