@@ -4,27 +4,28 @@
 # Configuration:
 # --------------
 GermanWordlist=("Breite" "Herstellung" "Jagd" "Orient" "Gewicht" "Hieb" "Stichwaffen" "cm")
-GermanBADlist=("Foto" "Druck" "Druckschriften" "Druckgraphik" "Fotografie" "Fotopapier" "Tischuhr")
+GermanBADlist=("Foto" "Druck" "Druckschriften" "schrift" "Stereofoto" "Druckgrafik" "Propagandatr" "Karikatur" "Fotografie" "Fotopapier" "Tischuhr")
 
 SavedListToLookAt="BockusAwesomeLinks.txt"
+SaveListOfArmors="List_of_Known_Armors.txt"
 
 Counter_BadPages=0
 Counter_GoodPages=0
 Counter_PagesSithKeyWords=0
+Counter_KnownArmor=0
 
 #Would you like to see debug messages?
 debug=false
 
 rm $SavedListToLookAt
 
-amount=`find . | grep -v ".git" | wc -l`
-echo "[ArmorSpider] Parsing $amount File(s) for keywords"
+ArmorAmount=`cat $SaveListOfArmors | wc -l`
 #Now look through ALL the files downloaded, and save web pages to a list
 
 counter=1
 ItemCounter=0
 echo "`find . | grep -v \".git\"`" > ListOfFiles.txt
-ItemsToScan=`find .|wc -l`
+ItemsToScan=`cat ListOfFiles.txt | wc -l`
 
 x="lolololololol"
 ##########################################################
@@ -47,9 +48,11 @@ echo "'/\`\"'\\\`"
 
 echo "[ArmorSpider] Super Awesome Armor Finder..."
 echo ""
-
-echo "[ArmorSpider] Looking for ${#GermanWordlist[@]} words"
-echo "[ArmorSpider] Banned ${#GermanBADlist[@]} words"
+echo "[ArmorSpider] Parsing $ItemsToScan File(s) for:"
+echo "[ArmorSpider]      Key words: ${#GermanWordlist[@]}"
+echo "[ArmorSpider]      Banned words: ${#GermanBADlist[@]}"
+echo "[ArmorSpider]      Found Armors: $ArmorAmount"
+echo ""	
 echo "[ArmorSpider] Press enter to continue..."
 read pressentertocontinue
 ##########################################################
@@ -66,15 +69,20 @@ while read WebPage; do
 	echo "'^\\+/^\`      Crawling ..."
 	echo "'/\`\"'\\\`"
 	echo "[ArmorSpider] Current Stats:"
-	echo "[ArmorSpider] Bad: $Counter_BadPages"
-	echo "[ArmorSpider] Good: $Counter_GoodPages"
-	echo "[ArmorSpider] Keyword Pages: $Counter_PagesSithKeyWords"
+	echo "[ArmorSpider]      Bad: $Counter_BadPages"
+	echo "[ArmorSpider]      Good: $Counter_GoodPages"
+	echo "[ArmorSpider]      Keyword Pages: $Counter_PagesSithKeyWords"
 	echo ""
-
-	echo "[$counter / $ItemsToScan] Looking at $WebPage"
-	Title=`cat "$WebPage" | grep "<class=\"dbtitle\">"` #Pull the title if it has one
-	if [ "$x"!="$x$Title" ]; then #IF Title is NOT empty
-		echo "Title of Artifact: $Title"
+	if $debug; then
+		echo "[$counter / $ItemsToScan] Looking at $WebPage"
+	     else
+		echo "[ArmorSpider] Scannning $counter / $ItemsToScan"
+	fi
+	if $debug; then
+		Title=`cat "$WebPage" | grep "<class=\"dbtitle\">"` #Pull the title if it has one
+		if [ "$x"!="$x$Title" ]; then #IF Title is NOT empty
+			echo "Title of Artifact: $Title"
+		fi
 	fi
 
 	notfound=true
@@ -88,7 +96,9 @@ while read WebPage; do
 			fi
 			tempFinding=`cat "$WebPage" | grep "$SearchWord"`
 			if [ "$x$tempFinding" != "$x" ]; then
-				echo "Found: ${GermanBADlist[@]} in $WebPage"
+				if $debug; then
+					echo "Found: ${GermanBADlist[@]} in $WebPage"
+				fi
 				#echo "$WebPage" >> $SavedListToLookAt
 				Counter_BadPages=$((Counter_BadPages + 1))
 				notBad=false
@@ -96,6 +106,19 @@ while read WebPage; do
 		fi
 	done
 
+
+	#Remove Known armors
+	while read KnownArmor; do
+			if $debug; then
+				echo "[ArmorSpider] Searching for known armor: $KnownArmor"
+			fi
+		tempFinding=`echo "$WebPage" | grep "$KnownArmor"`
+		if [ "$x$tempFinding" != "$x" ]; then
+			echo "Found: $KnownArmor in $WebPage"
+			Counter_KnownArmor=$((Counter_KnownArmor + 1))
+			notBad=false
+		fi
+	done < $SaveListOfArmors
 
 	if $notBad; then
 		Counter_GoodPages=$((Counter_GoodPages + 1))
@@ -138,15 +161,43 @@ echo " ^.-.^"
 echo "'^\\+/^\`"
 echo "'/\`\"'\\\`"
 echo ""
-echo "[ArmorSpider] Scanning Completed\! Final Stats:"
+echo "[ArmorSpider] Scanning Completed! Final Stats:"
 echo "[ArmorSpider] Bad: $Counter_BadPages"
 echo "[ArmorSpider] Good: $Counter_GoodPages"
 echo "[ArmorSpider] Keyword Pages: $Counter_PagesSithKeyWords"
-Convert="Y"
-echo ""
-echo "[ArmorSpider] Would you like to attempt images to webpage conversion? [Y/n]"
-read ConvertInput
 
-if[ "$Convert" == "$Convert$ConvertInput" ]; then
-	echo "[ArmorSpider] Attempting Conversion..."
-fi
+# Potential Image Converter:
+#Convert="Y"
+#echo ""
+#echo "[ArmorSpider] Would you like to attempt images to webpage conversion? [Y/n]"
+#read ConvertInput
+#
+#if [ "$Convert" = "$Convert$ConvertInput" ]; then
+#	echo "[ArmorSpider] Attempting Conversion..."
+#fi
+
+mv $SavedListToLookAt temp
+
+echo "   +-----------------------------------------" > $SavedListToLookAt
+echo "   :\". /  /  /" >> $SavedListToLookAt
+echo "   :.-\". /  /         ARMOR SPIDER" >> $SavedListToLookAt
+echo "   : _.-\". /             v 1.0" >> $SavedListToLookAt
+echo "   :\"  _.-\"." >> $SavedListToLookAt
+echo "   :-\"\"     \"." >> $SavedListToLookAt
+echo "   :                        By:" >> $SavedListToLookAt
+echo "   :                   Phrasz - 2013" >> $SavedListToLookAt
+echo " ^.-.^" >> $SavedListToLookAt
+echo "'^\\+/^\`" >> $SavedListToLookAt
+echo "'/\`\"'\\\`" >> $SavedListToLookAt
+echo "" >> $SavedListToLookAt
+echo "[ArmorSpider] Scanning Completed! Final Stats:" >> $SavedListToLookAt
+echo "[ArmorSpider] Bad: $Counter_BadPages" >> $SavedListToLookAt
+echo "[ArmorSpider] Good: $Counter_GoodPages" >> $SavedListToLookAt
+echo "[ArmorSpider] Keyword Pages: $Counter_PagesSithKeyWords" >> $SavedListToLookAt
+echo "[ArmorSpider] Scanned $ItemsToScan File(s)" >> $SavedListToLookAt
+cat temp  >> $SavedListToLookAt
+
+rm temp
+
+
+
